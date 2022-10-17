@@ -1,4 +1,4 @@
-project: imagesize_py
+project: imagesize-py
 target: img-fuzz
 testsuite:
     - file://mayhem/testsuite
