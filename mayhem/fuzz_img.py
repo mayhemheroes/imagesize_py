@@ -9,14 +9,21 @@ import tempfile
 with atheris.instrument_imports():
     import imagesize
 
+supported_ext = [".png"]
+
 def TestOneInput(data):
+        fdp = atheris.FuzzedDataProvider(data)
+        ext = supported_ext[fdp.ConsumeIntInRange(0, len(supported_ext)-1)]
+        file_data = fdp.ConsumeBytes(atheris.ALL_REMAINING)
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.name = "test" + ".png"
-        temp_file.write(data)
+        temp_file.write(file_data)
         temp_file.flush()
+        fd = temp_file.name
+        # fd.name = "test" + ext
+
         try:
-            imagesize.get(temp_file.name)
-            imagesize.getDPI(temp_file.name)
+            imagesize.get(fd)
+            imagesize.getDPI(fd)
         except ValueError:
             pass
 
