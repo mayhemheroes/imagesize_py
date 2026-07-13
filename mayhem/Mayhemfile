@@ -1,0 +1,19 @@
+# Mayhem target: imagesize header parsers (Atheris/libFuzzer harness).
+# The cmd binary is the compiled ELF launcher that drives mayhem/fuzz_img.py; Atheris
+# instruments the imagesize module so the run records coverage (edges).
+# Target name `img-fuzz` is the historical name — keep it so run history isn't orphaned.
+project: imagesize-py
+target: img-fuzz
+
+# The owner/project half of the accumulation URI is pinned: $MAYHEM_PROJECT interpolates to the
+# GitHub repo name (imagesize_py), but the Mayhem project slug is imagesize-py — the interpolated
+# form is treated as a DIFFERENT project and run-creation is denied ("You do not have access to
+# use a test suite from the project imagesize_py"). Same fix as jpeg_encoder. $MAYHEM_TARGET
+# stays literal so each target keys its own tar.
+testsuite:
+  - https://$MAYHEM_DOMAIN/mayhemheroes/imagesize-py/$MAYHEM_TARGET/testsuite.tar   # accumulation — REQUIRED
+  - file://mayhem/img-fuzz/testsuite                                                # local seed images
+
+cmds:
+  - cmd: /mayhem/img-fuzz
+    libfuzzer: true
